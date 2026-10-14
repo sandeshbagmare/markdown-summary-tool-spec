@@ -1,0 +1,42 @@
+[
+  {
+    "rows": 1000,
+    "naive_tokens": 13604,
+    "ctw_tokens": 1751,
+    "naive_latency_s": 0.8721,
+    "ctw_latency_s": 0.4731,
+    "token_saving_pct": 87.13,
+    "latency_saving_pct": 45.76,
+    "duckdb_time_s": 0.088
+  },
+  {
+    "rows": 5000,
+    "naive_tokens": 65604,
+    "ctw_tokens": 1765,
+    "naive_latency_s": 1.9121,
+    "ctw_latency_s": 0.4216,
+    "token_saving_pct": 97.31,
+    "latency_saving_pct": 77.95,
+    "duckdb_time_s": 0.0363
+  },
+  {
+    "rows": 10000,
+    "naive_tokens": 130604,
+    "ctw_tokens": 1764,
+    "naive_latency_s": 3.2121,
+    "ctw_latency_s": 0.4162,
+    "token_saving_pct": 98.65,
+    "latency_saving_pct": 87.04,
+    "duckdb_time_s": 0.0309
+  },
+  {
+    "rows": 20000,
+    "naive_tokens": 260604,
+    "ctw_tokens": 1771,
+    "naive_latency_s": 5.8121,
+    "ctw_latency_s": 0.4219,
+    "token_saving_pct": 99.32,
+    "latency_saving_pct": 92.74,
+    "duckdb_time_s": 0.0365
+  }
+]
