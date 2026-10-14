@@ -44,6 +44,12 @@ class SummaryOptions(BaseModel):
     locale: str = Field(default="en-US", description="BCP-47 locale for number/date formatting.")
     timeout_ms: int = Field(default=30_000, ge=100, le=300_000, description="End-to-end timeout in milliseconds.")
     include_warnings: bool = Field(default=True, description="Whether to include warnings in the response.")
+    # Presentation — self-contained HTML report
+    preamble: str | None = Field(default=None, description="HTML fragment shown before markdown body (sanitized).")
+    postamble: str | None = Field(default=None, description="HTML fragment shown after markdown body (sanitized).")
+    title: str | None = Field(default=None, description="Report title for HTML <title> and header.")
+    theme: str | None = Field(default=None, description="HTML theme: light | dark.")
+    include_html: bool = Field(default=True, description="Whether to include rendered HTML in response.")
 
 
 class SummaryRequest(BaseModel):

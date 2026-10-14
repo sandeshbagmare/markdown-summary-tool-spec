@@ -158,12 +158,63 @@ def _sse(event: str, data: Any) -> str:
 
 
 def _infer_tool(question: str, tool: str) -> str:
-    if tool in ("markdown", "visualization"):
+    if tool in ("markdown", "visualization", "dashboard"):
         return tool
     q = question.lower()
+    if any(k in q for k in ("dashboard", "multiple charts", "multi-chart", "overview dashboard")):
+        return "dashboard"
     if any(k in q for k in ("chart", "graph", "plot", "visualize", "bar", "line", "pie", "scatter", "trend", "distribution")):
         return "visualization"
     return "markdown"
+
+
+async def _stream_dashboard(req: ChatRequest) -> AsyncGenerator[str, None]:
+    t0 = time.monotonic()
+    yield _sse("status", {"stage": "fetch", "label": "Fetching datasets…"})
+    await asyncio.sleep(0.12)
+    yield _sse("status", {"stage": "aggregate", "label": "Aggregating (DuckDB)…"})
+    await asyncio.sleep(0.1)
+    yield _sse("status", {"stage": "spec", "label": "Building dashboard (2-4 charts)…"})
+    await asyncio.sleep(0.08)
+
+    def _run():
+        from visualization_tool.tool import create_dashboard
+        raw = create_dashboard.invoke({
+            "datasets_json": json.dumps(req.datasets),
+            "question": req.question,
+            "charts_json": json.dumps(req.options.get("charts", [])),
+            "options_json": json.dumps({k: v for k, v in req.options.items() if k != "charts"}),
+        })
+        return json.loads(raw)
+
+    try:
+        result = await asyncio.to_thread(_run)
+    except Exception as exc:
+        yield _sse("error", {"message": str(exc), "type": type(exc).__name__})
+        yield _sse("done", {"elapsed_ms": int((time.monotonic() - t0) * 1000)})
+        return
+    if "error_code" in result:
+        yield _sse("error", {"message": result.get("message", "dashboard failed"), "details": result})
+        yield _sse("done", {"elapsed_ms": int((time.monotonic() - t0) * 1000)})
+        return
+    preamble = result.get("preamble", "") or req.options.get("preamble", "")
+    postamble = result.get("postamble", "") or req.options.get("postamble", "")
+    html_doc = result.get("html", "")
+    dashboard = result.get("dashboard", {})
+    if preamble:
+        yield _sse("preamble", {"html": preamble})
+    for ch in dashboard.get("charts", []):
+        yield _sse("chart", {"chart_spec": ch.get("chart_spec"), "meta": ch.get("meta", {}), "title": ch.get("title", ""), "preamble": ch.get("preamble", ""), "postamble": ch.get("postamble", "")})
+        await asyncio.sleep(0.04)
+    if postamble:
+        yield _sse("postamble", {"html": postamble})
+    if html_doc:
+        yield _sse("html", {"html": html_doc})
+    if dashboard.get("html"):
+        yield _sse("dashboard_html", {"html": dashboard["html"]})
+    yield _sse("facts", {"facts": result.get("facts", [])})
+    yield _sse("warnings", {"warnings": result.get("warnings", [])})
+    yield _sse("done", {"elapsed_ms": int((time.monotonic() - t0) * 1000)})
 
 
 async def _stream_markdown(req: ChatRequest) -> AsyncGenerator[str, None]:
@@ -196,6 +247,14 @@ async def _stream_markdown(req: ChatRequest) -> AsyncGenerator[str, None]:
     yield _sse("status", {"stage": "verify", "label": "Verifying numbers…"})
     await asyncio.sleep(0.08)
 
+    # Stream preamble → markdown → postamble → html (self-contained)
+    preamble = result.get("preamble", "") or req.options.get("preamble", "")
+    postamble = result.get("postamble", "") or req.options.get("postamble", "")
+    html_doc = result.get("html", "")
+
+    if preamble:
+        yield _sse("preamble", {"html": preamble})
+        await asyncio.sleep(0.05)
     # Stream markdown token-by-token (word chunks) for ChatGPT feel
     md: str = result.get("markdown", "")
     words = md.split(" ")
@@ -208,6 +267,11 @@ async def _stream_markdown(req: ChatRequest) -> AsyncGenerator[str, None]:
             await asyncio.sleep(0.02)
     if buf:
         yield _sse("markdown_chunk", {"text": buf})
+    if postamble:
+        yield _sse("postamble", {"html": postamble})
+        await asyncio.sleep(0.05)
+    if html_doc:
+        yield _sse("html", {"html": html_doc})
 
     yield _sse("facts", {"facts": result.get("facts", [])})
     yield _sse("warnings", {"warnings": result.get("warnings", [])})
@@ -249,7 +313,33 @@ async def _stream_visualization(req: ChatRequest) -> AsyncGenerator[str, None]:
         yield _sse("done", {"elapsed_ms": int((time.monotonic() - t0) * 1000)})
         return
 
-    yield _sse("chart", {"chart_spec": result.get("chart_spec"), "meta": result.get("meta", {})})
+    # Self-contained: preamble + chart(s) + postamble + html
+    preamble = result.get("preamble", "") or req.options.get("preamble", "")
+    postamble = result.get("postamble", "") or req.options.get("postamble", "")
+    html_doc = result.get("html", "")
+    # Dashboard vs single chart
+    dashboard = result.get("dashboard")
+    if dashboard:
+        if preamble:
+            yield _sse("preamble", {"html": preamble})
+        for ch in dashboard.get("charts", []):
+            yield _sse("chart", {"chart_spec": ch.get("chart_spec"), "meta": ch.get("meta", {}), "title": ch.get("title", ""), "preamble": ch.get("preamble", ""), "postamble": ch.get("postamble", "")})
+            await asyncio.sleep(0.05)
+        if postamble:
+            yield _sse("postamble", {"html": postamble})
+        if html_doc:
+            yield _sse("html", {"html": html_doc})
+        # Also emit dashboard html separately for iframe preview
+        if dashboard.get("html"):
+            yield _sse("dashboard_html", {"html": dashboard["html"]})
+    else:
+        if preamble:
+            yield _sse("preamble", {"html": preamble})
+        yield _sse("chart", {"chart_spec": result.get("chart_spec"), "meta": result.get("meta", {}), "title": result.get("preamble", "")})
+        if postamble:
+            yield _sse("postamble", {"html": postamble})
+        if html_doc:
+            yield _sse("html", {"html": html_doc})
     yield _sse("facts", {"facts": result.get("facts", [])})
     yield _sse("warnings", {"warnings": result.get("warnings", [])})
     yield _sse("done", {"elapsed_ms": int((time.monotonic() - t0) * 1000)})
@@ -266,7 +356,12 @@ async def chat_stream(req: ChatRequest, request: Request):
 
     async def gen() -> AsyncGenerator[str, None]:
         yield _sse("tool", {"tool": chosen, "question": req.question})
-        if chosen == "visualization":
+        if chosen == "dashboard":
+            async for chunk in _stream_dashboard(req):
+                if await request.is_disconnected():
+                    break
+                yield chunk
+        elif chosen == "visualization":
             async for chunk in _stream_visualization(req):
                 if await request.is_disconnected():
                     break

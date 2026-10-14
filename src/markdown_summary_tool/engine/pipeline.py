@@ -116,8 +116,30 @@ async def _run_async(request: dict[str, Any], llm: Any | None = None) -> dict[st
 
     elapsed_ms = int((time.monotonic() - t0) * 1000)
 
+    # 8. Self-contained HTML (pre + markdown + post)
+    html: str | None = None
+    if options.get("include_html", True):
+        try:
+            from markdown_summary_tool.presentation.html import build_report_html
+
+            html = build_report_html(
+                markdown=markdown,
+                preamble=options.get("preamble") or "",
+                postamble=options.get("postamble") or "",
+                title=options.get("title") or "Summary Report",
+                facts=facts,
+                warnings=warnings if options.get("include_warnings", True) else None,
+                meta={"elapsed_ms": elapsed_ms, "verified": passed, "violations": violations},
+                theme=options.get("theme") or "light",
+            )
+        except Exception:
+            html = None
+
     return {
         "markdown": markdown,
+        "html": html,
+        "preamble": options.get("preamble") or "",
+        "postamble": options.get("postamble") or "",
         "facts": facts,
         "warnings": warnings,
         "artifacts": {},
