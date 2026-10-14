@@ -1,0 +1,30 @@
+[project]
+name = "markdown-summary-tool"
+version = "1.0.0"
+description = "Compute-then-write markdown summary service — deterministic engine + LLM verbalization + mechanical verification"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.110",
+    "pydantic>=2.6",
+    "uvicorn>=0.29",
+    "duckdb>=0.10",
+    "pandas>=2.0",
+    "httpx>=0.27",
+    "python-dateutil>=2.8",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-asyncio>=0.23", "httpx", "nh3>=0.2"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

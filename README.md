@@ -25,6 +25,29 @@
 
 1. Introduction & Scope · 2. Research Findings · 3. Decision Log (20 decisions) · 4. System Architecture · 5. Tool Input Spec · 6. Processing Pipeline (10 stages) · 7. Data Handling · 8. Summary Design · 9. Faithfulness & Verification · 10. Model Call Design · 11. Tool Output Spec · 12. Consistency & Quality · 13. Security & Privacy · 14. Errors & Warnings · 15. Testing & Evaluation (115-case harness) · 16. Operations & Observability · 17. Implementation Blueprint · 18. Worked Examples (8) · 19. Comparison · 20. Roadmap/Risks/Open Questions · 21. Appendices A–N
 
+## Implementation
+
+```powershell
+pip install -e ".[dev]"
+pytest -q                          # 8 tests
+python examples/demo.py            # end-to-end demo
+uvicorn markdown_summary_tool.gateway.app:app --reload  # API at /docs
+```
+
+```
+src/markdown_summary_tool/
+  gateway/     FastAPI app (POST /v1/summarize, GET /health)
+  models/      Pydantic v2 schemas (DataRef, SummaryRequest/Response, Fact)
+  connectors/  inline_json / inline_csv / url (httpx + pagination)
+  normalizer/  type coercion, null handling, date parsing
+  profiler/    row/column stats, cardinality, 5-row sample
+  engine/      DuckDB push-down + pipeline orchestration
+  facts/       deterministic planner + SQL fact computation
+  llm/         MockLLM + OpenAI-compatible client, prompt templates
+  verifier/    regex number extraction + mechanical verification + repair
+  sanitizer/   HTML/URI/event-handler stripping + column redaction
+```
+
 ## Rebuild the PDF
 
 ```powershell
