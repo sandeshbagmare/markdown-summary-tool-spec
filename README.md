@@ -70,6 +70,28 @@ python build/stitch.py
 # → Markdown_Summary_Tool_Technical_Specification_v1.0.pdf (80 pages)
 ```
 
+## Live Outputs (30 samples + dashboard)
+
+All generated live via the 2 DeepAgent tools — not hand-written. Open directly or embed via iframe.
+
+| Output | How to generate | What it is |
+|--------|-----------------|------------|
+| [`outputs/samples_30.html`](./outputs/samples_30.html) | `python outputs/generate_30_samples.py` | 15× `create_markdown_summary` + 15× `create_visualization` fired in parallel (ThreadPoolExecutor) — 15 verified markdown cards + 15 live Vega charts |
+| [`outputs/samples_raw.json`](./outputs/samples_raw.json) | Same run | Raw JSON for all 30 calls — inspect `markdown`, `facts`, `chart_spec` |
+| [`outputs/dashboard.html`](./outputs/dashboard.html) | `python outputs/generate_dashboard.py` | 6× `create_visualization` + 1× `create_markdown_summary` in parallel → one responsive grid + KPI row + verified summary |
+
+```html
+<iframe src="outputs/samples_30.html" width="100%" height="900" style="border:1px solid #1e293b;border-radius:12px"></iframe>
+<iframe src="outputs/dashboard.html" width="100%" height="900" style="border:1px solid #1e293b;border-radius:12px"></iframe>
+```
+
+Single `create_visualization` = single chart by design; dashboard = N parallel calls stitched into one HTML (app layer). See [`AGENTS.md`](./AGENTS.md) and [`SKILL.md`](./SKILL.md) for verifiable agents/skills reference.
+
+## Agents & Skills
+
+* [`AGENTS.md`](./AGENTS.md) — The 2 tools, DeepAgent wiring, architecture, live outputs, and how to verify every claim (copy-paste commands).
+* [`SKILL.md`](./SKILL.md) — What each tool can do, with example questions and which sample proves it.
+
 ## License
 
 Draft for engineering review — confidential.

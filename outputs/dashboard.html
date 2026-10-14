@@ -1,0 +1,237 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Dashboard — 6 Charts + Summary (Live)</title>
+<script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#0f172a;color:#e2e8f0}
+header{position:sticky;top:0;z-index:10;background:#0f172ae6;backdrop-filter:blur(8px);border-bottom:1px solid #1e293b;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+header h1{margin:0;font-size:18px} header p{margin:4px 0 0;color:#94a3b8;font-size:12px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px 20px}
+@media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:#111c33;border:1px solid #1e293b;border-radius:14px;padding:14px}
+.kpi .label{font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em}
+.kpi .value{font-size:20px;font-weight:700;margin-top:4px;color:#f1f5f9}
+.kpi .sub{font-size:11px;color:#64748b;margin-top:2px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:0 20px 20px}
+@media(max-width:1100px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.grid{grid-template-columns:1fr}}
+.card{background:#111c33;border:1px solid #1e293b;border-radius:14px;overflow:hidden}
+.card h3{margin:0;padding:10px 12px;font-size:12px;background:#0b1224;border-bottom:1px solid #1e293b;display:flex;justify-content:space-between;align-items:center}
+.badge{font-size:10px;padding:3px 7px;border-radius:999px;background:#1e293b;color:#93c5fd}
+.vega{background:#fff;border-radius:10px;margin:10px;padding:6px;min-height:260px}
+.summary{margin:0 20px 20px;background:#111c33;border:1px solid #1e293b;border-radius:14px;overflow:hidden}
+.summary h2{margin:0;padding:12px 16px;font-size:13px;background:#0b1224;border-bottom:1px solid #1e293b}
+.summary .body{padding:16px} .summary .body p{font-size:13px;line-height:1.5;color:#cbd5e1} .summary .body li{font-size:13px;margin:4px 0}
+.summary .body h3{font-size:14px;color:#f1f5f9;margin:12px 0 6px}
+footer{padding:14px 20px;color:#64748b;font-size:11px;border-top:1px solid #1e293b}
+code{background:#1e293b;padding:2px 6px;border-radius:6px;font-size:11px}
+</style></head><body>
+<header><div><h1>📊 Live Dashboard — 6 Charts + Verified Summary</h1><p>Built from <code>create_visualization</code> ×6 + <code>create_markdown_summary</code> ×1 — all fired <b>in parallel</b> (DuckDB + Vega-Lite). Single HTML, iframe-ready.</p></div><div style="font-size:11px;color:#94a3b8">2026-10-14 12:50 · verified ✓</div></header>
+
+<div class="kpis">
+<div class="kpi"><div class="label">Row count for &#x27;orders&#x27;</div><div class="value">2,000</div><div class="sub">orders__count · count</div></div>
+<div class="kpi"><div class="label">Sum of amount in &#x27;orders&#x27;</div><div class="value">2,058,964.70</div><div class="sub">orders__amount__sum · sum</div></div>
+<div class="kpi"><div class="label">Average of amount in &#x27;orders&#x27;</div><div class="value">1,029.48</div><div class="sub">orders__amount__avg · avg</div></div>
+<div class="kpi"><div class="label">Row count for &#x27;products&#x27;</div><div class="value">800</div><div class="sub">products__count · count</div></div>
+</div>
+<div class="grid">
+<div class="card"><h3>Revenue by Region <span class="badge">bar · 20 rows</span></h3><div id="vis-0" class="vega"></div><div style="padding:0 12px 10px;color:#64748b;font-size:11px">Bar chart of total amount by region</div></div>
+<script>(function(){const spec={"$schema": "https://vega.github.io/schema/vega-lite/v5.json", "width": 380, "height": 260, "data": {"values": [{"order_id": "O000281", "amount": 1999.15}, {"order_id": "O000027", "amount": 1998.57}, {"order_id": "O000204", "amount": 1996.32}, {"order_id": "O001954", "amount": 1996.31}, {"order_id": "O001861", "amount": 1994.23}, {"order_id": "O001034", "amount": 1993.72}, {"order_id": "O000083", "amount": 1993.3}, {"order_id": "O001241", "amount": 1992.91}, {"order_id": "O000397", "amount": 1992.82}, {"order_id": "O000227", "amount": 1991.98}, {"order_id": "O001972", "amount": 1991.95}, {"order_id": "O000265", "amount": 1988.31}, {"order_id": "O000450", "amount": 1984.77}, {"order_id": "O001400", "amount": 1984.72}, {"order_id": "O000106", "amount": 1984.59}, {"order_id": "O001881", "amount": 1984.28}, {"order_id": "O000625", "amount": 1983.01}, {"order_id": "O000781", "amount": 1982.63}, {"order_id": "O001932", "amount": 1982.32}, {"order_id": "O001385", "amount": 1981.87}]}, "mark": "bar", "encoding": {"x": {"field": "order_id", "type": "nominal", "axis": {"labelAngle": -30}}, "y": {"field": "amount", "type": "quantitative"}, "tooltip": [{"field": "order_id"}, {"field": "amount", "type": "quantitative"}]}}; vegaEmbed("#vis-0", spec, {actions:false}).catch(e=>{document.getElementById("vis-0").innerHTML="<pre style=color:#ef4444>"+e.message+"</pre>"});})();</script>
+<div class="card"><h3>Revenue Trend <span class="badge">line · 12 rows</span></h3><div id="vis-1" class="vega"></div><div style="padding:0 12px 10px;color:#64748b;font-size:11px">Line chart showing revenue trend over month</div></div>
+<script>(function(){const spec={"$schema": "https://vega.github.io/schema/vega-lite/v5.json", "width": 380, "height": 260, "data": {"values": [{"month": "2026-04", "count": 31}, {"month": "2026-02", "count": 31}, {"month": "2026-01", "count": 31}, {"month": "2026-03", "count": 31}, {"month": "2026-05", "count": 31}, {"month": "2026-07", "count": 30}, {"month": "2026-06", "count": 30}, {"month": "2026-10", "count": 30}, {"month": "2026-11", "count": 30}, {"month": "2026-08", "count": 30}, {"month": "2026-12", "count": 30}, {"month": "2026-09", "count": 30}]}, "mark": {"type": "line", "point": true}, "encoding": {"x": {"field": "month", "type": "nominal"}, "y": {"field": "count", "type": "quantitative"}, "tooltip": [{"field": "month"}, {"field": "count", "type": "quantitative"}]}}; vegaEmbed("#vis-1", spec, {actions:false}).catch(e=>{document.getElementById("vis-1").innerHTML="<pre style=color:#ef4444>"+e.message+"</pre>"});})();</script>
+<div class="card"><h3>Share by Category <span class="badge">pie · 20 rows</span></h3><div id="vis-2" class="vega"></div><div style="padding:0 12px 10px;color:#64748b;font-size:11px">Pie chart of revenue share by category</div></div>
+<script>(function(){const spec={"$schema": "https://vega.github.io/schema/vega-lite/v5.json", "width": 380, "height": 260, "data": {"values": [{"order_id": "O000281", "amount": 1999.15}, {"order_id": "O000027", "amount": 1998.57}, {"order_id": "O000204", "amount": 1996.32}, {"order_id": "O001954", "amount": 1996.31}, {"order_id": "O001861", "amount": 1994.23}, {"order_id": "O001034", "amount": 1993.72}, {"order_id": "O000083", "amount": 1993.3}, {"order_id": "O001241", "amount": 1992.91}, {"order_id": "O000397", "amount": 1992.82}, {"order_id": "O000227", "amount": 1991.98}, {"order_id": "O001972", "amount": 1991.95}, {"order_id": "O000265", "amount": 1988.31}, {"order_id": "O000450", "amount": 1984.77}, {"order_id": "O001400", "amount": 1984.72}, {"order_id": "O000106", "amount": 1984.59}, {"order_id": "O001881", "amount": 1984.28}, {"order_id": "O000625", "amount": 1983.01}, {"order_id": "O000781", "amount": 1982.63}, {"order_id": "O001932", "amount": 1982.32}, {"order_id": "O001385", "amount": 1981.87}]}, "mark": "arc", "encoding": {"theta": {"field": "amount", "type": "quantitative"}, "color": {"field": "order_id", "type": "nominal"}, "tooltip": [{"field": "order_id"}, {"field": "amount", "type": "quantitative"}]}}; vegaEmbed("#vis-2", spec, {actions:false}).catch(e=>{document.getElementById("vis-2").innerHTML="<pre style=color:#ef4444>"+e.message+"</pre>"});})();</script>
+<div class="card"><h3>Price vs Rating <span class="badge">scatter · 100 rows</span></h3><div id="vis-3" class="vega"></div><div style="padding:0 12px 10px;color:#64748b;font-size:11px">Scatter plot of price vs rating</div></div>
+<script>(function(){const spec={"$schema": "https://vega.github.io/schema/vega-lite/v5.json", "width": 380, "height": 260, "data": {"values": [{"price": 1145.35, "stock": 306}, {"price": 2280.83, "stock": 128}, {"price": 1470.38, "stock": 215}, {"price": 2467.86, "stock": 441}, {"price": 1983.4, "stock": 435}, {"price": 2033.75, "stock": 44}, {"price": 811.85, "stock": 3}, {"price": 247.05, "stock": 265}, {"price": 1075.79, "stock": 110}, {"price": 1788.28, "stock": 90}, {"price": 333.83, "stock": 87}, {"price": 2810.36, "stock": 323}, {"price": 21.98, "stock": 168}, {"price": 2700.41, "stock": 498}, {"price": 776.44, "stock": 206}, {"price": 2824.35, "stock": 243}, {"price": 2337.93, "stock": 77}, {"price": 293.97, "stock": 73}, {"price": 440.81, "stock": 106}, {"price": 2394.91, "stock": 433}, {"price": 2036.58, "stock": 256}, {"price": 652.88, "stock": 204}, {"price": 1245.13, "stock": 189}, {"price": 2769.49, "stock": 369}, {"price": 937.7, "stock": 335}, {"price": 2623.32, "stock": 369}, {"price": 892.65, "stock": 384}, {"price": 2891.6, "stock": 131}, {"price": 2365.67, "stock": 273}, {"price": 2645.33, "stock": 209}, {"price": 1139.98, "stock": 347}, {"price": 1142.57, "stock": 454}, {"price": 2084.54, "stock": 493}, {"price": 1973.21, "stock": 380}, {"price": 2582.21, "stock": 176}, {"price": 1507.46, "stock": 103}, {"price": 1535.79, "stock": 412}, {"price": 2246.99, "stock": 378}, {"price": 2219.01, "stock": 53}, {"price": 100.72, "stock": 29}, {"price": 1881.07, "stock": 363}, {"price": 2271.21, "stock": 442}, {"price": 798.08, "stock": 168}, {"price": 2604.43, "stock": 355}, {"price": 2863.22, "stock": 91}, {"price": 1392.17, "stock": 432}, {"price": 2480.86, "stock": 479}, {"price": 2941.4, "stock": 272}, {"price": 51.16, "stock": 168}, {"price": 1967.27, "stock": 2}, {"price": 1750.92, "stock": 211}, {"price": 2760.38, "stock": 203}, {"price": 693.72, "stock": 386}, {"price": 2088.13, "stock": 213}, {"price": 1456.56, "stock": 139}, {"price": 1681.3, "stock": 101}, {"price": 1959.53, "stock": 417}, {"price": 2476.09, "stock": 76}, {"price": 1941.6, "stock": 85}, {"price": 1826.75, "stock": 495}, {"price": 2679.79, "stock": 414}, {"price": 542.83, "stock": 56}, {"price": 1133.63, "stock": 349}, {"price": 1334.33, "stock": 405}, {"price": 2626.92, "stock": 429}, {"price": 762.74, "stock": 301}, {"price": 905.41, "stock": 81}, {"price": 2430.0, "stock": 151}, {"price": 2405.85, "stock": 20}, {"price": 1993.65, "stock": 412}, {"price": 2442.6, "stock": 312}, {"price": 2292.28, "stock": 480}, {"price": 1539.26, "stock": 461}, {"price": 1221.81, "stock": 27}, {"price": 2531.44, "stock": 48}, {"price": 399.61, "stock": 488}, {"price": 2967.66, "stock": 130}, {"price": 14.64, "stock": 329}, {"price": 226.7, "stock": 301}, {"price": 1437.12, "stock": 313}, {"price": 2202.24, "stock": 248}, {"price": 1836.1, "stock": 463}, {"price": 2215.77, "stock": 127}, {"price": 1956.16, "stock": 344}, {"price": 725.31, "stock": 116}, {"price": 1575.5, "stock": 37}, {"price": 1005.9, "stock": 96}, {"price": 1313.09, "stock": 161}, {"price": 559.43, "stock": 460}, {"price": 1733.88, "stock": 151}, {"price": 482.09, "stock": 199}, {"price": 784.83, "stock": 231}, {"price": 698.64, "stock": 311}, {"price": 1079.72, "stock": 162}, {"price": 464.55, "stock": 37}, {"price": 670.25, "stock": 317}, {"price": 1305.0, "stock": 336}, {"price": 1274.13, "stock": 448}, {"price": 2137.67, "stock": 413}, {"price": 2791.31, "stock": 112}]}, "mark": "point", "encoding": {"x": {"field": "price", "type": "quantitative"}, "y": {"field": "stock", "type": "quantitative"}, "tooltip": [{"field": "price", "type": "quantitative"}, {"field": "stock", "type": "quantitative"}]}}; vegaEmbed("#vis-3", spec, {actions:false}).catch(e=>{document.getElementById("vis-3").innerHTML="<pre style=color:#ef4444>"+e.message+"</pre>"});})();</script>
+<div class="card"><h3>Stock by Supplier <span class="badge">bar · 20 rows</span></h3><div id="vis-4" class="vega"></div><div style="padding:0 12px 10px;color:#64748b;font-size:11px">Bar chart of total stock by supplier</div></div>
+<script>(function(){const spec={"$schema": "https://vega.github.io/schema/vega-lite/v5.json", "width": 380, "height": 260, "data": {"values": [{"sku": "SKU000482", "price": 2992.02}, {"sku": "SKU000111", "price": 2991.9}, {"sku": "SKU000409", "price": 2976.5}, {"sku": "SKU000180", "price": 2974.35}, {"sku": "SKU000565", "price": 2973.99}, {"sku": "SKU000076", "price": 2967.66}, {"sku": "SKU000551", "price": 2966.88}, {"sku": "SKU000763", "price": 2960.02}, {"sku": "SKU000791", "price": 2959.46}, {"sku": "SKU000623", "price": 2949.08}, {"sku": "SKU000592", "price": 2946.18}, {"sku": "SKU000608", "price": 2943.47}, {"sku": "SKU000047", "price": 2941.4}, {"sku": "SKU000152", "price": 2931.59}, {"sku": "SKU000403", "price": 2930.24}, {"sku": "SKU000467", "price": 2927.68}, {"sku": "SKU000599", "price": 2925.97}, {"sku": "SKU000174", "price": 2916.23}, {"sku": "SKU000517", "price": 2915.68}, {"sku": "SKU000231", "price": 2915.64}]}, "mark": "bar", "encoding": {"x": {"field": "sku", "type": "nominal", "axis": {"labelAngle": -30}}, "y": {"field": "price", "type": "quantitative"}, "tooltip": [{"field": "sku"}, {"field": "price", "type": "quantitative"}]}}; vegaEmbed("#vis-4", spec, {actions:false}).catch(e=>{document.getElementById("vis-4").innerHTML="<pre style=color:#ef4444>"+e.message+"</pre>"});})();</script>
+<div class="card"><h3>Orders by Status <span class="badge">bar · 20 rows</span></h3><div id="vis-5" class="vega"></div><div style="padding:0 12px 10px;color:#64748b;font-size:11px">Bar chart of order count by status</div></div>
+<script>(function(){const spec={"$schema": "https://vega.github.io/schema/vega-lite/v5.json", "width": 380, "height": 260, "data": {"values": [{"order_id": "O000281", "amount": 1999.15}, {"order_id": "O000027", "amount": 1998.57}, {"order_id": "O000204", "amount": 1996.32}, {"order_id": "O001954", "amount": 1996.31}, {"order_id": "O001861", "amount": 1994.23}, {"order_id": "O001034", "amount": 1993.72}, {"order_id": "O000083", "amount": 1993.3}, {"order_id": "O001241", "amount": 1992.91}, {"order_id": "O000397", "amount": 1992.82}, {"order_id": "O000227", "amount": 1991.98}, {"order_id": "O001972", "amount": 1991.95}, {"order_id": "O000265", "amount": 1988.31}, {"order_id": "O000450", "amount": 1984.77}, {"order_id": "O001400", "amount": 1984.72}, {"order_id": "O000106", "amount": 1984.59}, {"order_id": "O001881", "amount": 1984.28}, {"order_id": "O000625", "amount": 1983.01}, {"order_id": "O000781", "amount": 1982.63}, {"order_id": "O001932", "amount": 1982.32}, {"order_id": "O001385", "amount": 1981.87}]}, "mark": "bar", "encoding": {"x": {"field": "order_id", "type": "nominal", "axis": {"labelAngle": -30}}, "y": {"field": "amount", "type": "quantitative"}, "tooltip": [{"field": "order_id"}, {"field": "amount", "type": "quantitative"}]}}; vegaEmbed("#vis-5", spec, {actions:false}).catch(e=>{document.getElementById("vis-5").innerHTML="<pre style=color:#ef4444>"+e.message+"</pre>"});})();</script>
+</div>
+<div class="summary"><h2>📝 Verified Markdown Summary — Summarize total revenue, average order value, order count by region and category… <span style="float:right;color:#6ee7b7;font-size:11px">verified ✓ · 62 facts</span></h2><div class="body"><h3>Summary</h3>
+
+<ul>
+<li><strong>Row count for &#x27;orders&#x27;</strong> (count): 2,000</li>
+<li><strong>Sum of amount in &#x27;orders&#x27;</strong> (sum): 2,058,964.70</li>
+<li><strong>Average of amount in &#x27;orders&#x27;</strong> (avg): 1,029.48</li>
+<li><strong>Minimum of amount in &#x27;orders&#x27;</strong> (min): 11.99</li>
+<li><strong>Maximum of amount in &#x27;orders&#x27;</strong> (max): 1,999.15</li>
+<li><strong>Group counts for region in &#x27;orders&#x27;</strong> (group_count): 525</li>
+<li><strong>Group counts for region in &#x27;orders&#x27;</strong> (group_count): 505</li>
+<li><strong>Group counts for region in &#x27;orders&#x27;</strong> (group_count): 488</li>
+<li><strong>Group counts for region in &#x27;orders&#x27;</strong> (group_count): 482</li>
+<li><strong>Top 5 values of region in &#x27;orders&#x27;</strong> (topk): 525</li>
+<li><strong>Top 5 values of region in &#x27;orders&#x27;</strong> (topk): 505</li>
+<li><strong>Top 5 values of region in &#x27;orders&#x27;</strong> (topk): 488</li>
+<li><strong>Top 5 values of region in &#x27;orders&#x27;</strong> (topk): 482</li>
+<li><strong>Group counts for category in &#x27;orders&#x27;</strong> (group_count): 453</li>
+<li><strong>Group counts for category in &#x27;orders&#x27;</strong> (group_count): 409</li>
+<li><strong>Group counts for category in &#x27;orders&#x27;</strong> (group_count): 386</li>
+<li><strong>Group counts for category in &#x27;orders&#x27;</strong> (group_count): 380</li>
+<li><strong>Group counts for category in &#x27;orders&#x27;</strong> (group_count): 372</li>
+<li><strong>Top 5 values of category in &#x27;orders&#x27;</strong> (topk): 453</li>
+<li><strong>Top 5 values of category in &#x27;orders&#x27;</strong> (topk): 409</li>
+<li><strong>Top 5 values of category in &#x27;orders&#x27;</strong> (topk): 386</li>
+<li><strong>Top 5 values of category in &#x27;orders&#x27;</strong> (topk): 380</li>
+<li><strong>Top 5 values of category in &#x27;orders&#x27;</strong> (topk): 372</li>
+<li><strong>Sum of quantity in &#x27;orders&#x27;</strong> (sum): 11,095</li>
+<li><strong>Average of quantity in &#x27;orders&#x27;</strong> (avg): 5.55</li>
+<li><strong>Minimum of quantity in &#x27;orders&#x27;</strong> (min): 1</li>
+<li><strong>Maximum of quantity in &#x27;orders&#x27;</strong> (max): 10</li>
+<li><strong>Sum of discount in &#x27;orders&#x27;</strong> (sum): 295.61</li>
+<li><strong>Average of discount in &#x27;orders&#x27;</strong> (avg): 0.15</li>
+<li><strong>Minimum of discount in &#x27;orders&#x27;</strong> (min): 0</li>
+<li><strong>Maximum of discount in &#x27;orders&#x27;</strong> (max): 0.3</li>
+<li><strong>Group counts for status in &#x27;orders&#x27;</strong> (group_count): 510</li>
+<li><strong>Group counts for status in &#x27;orders&#x27;</strong> (group_count): 507</li>
+<li><strong>Group counts for status in &#x27;orders&#x27;</strong> (group_count): 496</li>
+<li><strong>Group counts for status in &#x27;orders&#x27;</strong> (group_count): 487</li>
+<li><strong>Row count for &#x27;products&#x27;</strong> (count): 800</li>
+<li><strong>Group counts for category in &#x27;products&#x27;</strong> (group_count): 171</li>
+<li><strong>Group counts for category in &#x27;products&#x27;</strong> (group_count): 162</li>
+<li><strong>Group counts for category in &#x27;products&#x27;</strong> (group_count): 159</li>
+<li><strong>Group counts for category in &#x27;products&#x27;</strong> (group_count): 156</li>
+<li><strong>Group counts for category in &#x27;products&#x27;</strong> (group_count): 152</li>
+<li><strong>Top 5 values of category in &#x27;products&#x27;</strong> (topk): 171</li>
+<li><strong>Top 5 values of category in &#x27;products&#x27;</strong> (topk): 162</li>
+<li><strong>Top 5 values of category in &#x27;products&#x27;</strong> (topk): 159</li>
+<li><strong>Top 5 values of category in &#x27;products&#x27;</strong> (topk): 156</li>
+<li><strong>Top 5 values of category in &#x27;products&#x27;</strong> (topk): 152</li>
+<li><strong>Sum of price in &#x27;products&#x27;</strong> (sum): 1,209,613.54</li>
+<li><strong>Average of price in &#x27;products&#x27;</strong> (avg): 1,512.02</li>
+<li><strong>Minimum of price in &#x27;products&#x27;</strong> (min): 5.37</li>
+<li><strong>Maximum of price in &#x27;products&#x27;</strong> (max): 2,992.02</li>
+<li><strong>Sum of stock in &#x27;products&#x27;</strong> (sum): 201,279</li>
+<li><strong>Average of stock in &#x27;products&#x27;</strong> (avg): 251.60</li>
+<li><strong>Minimum of stock in &#x27;products&#x27;</strong> (min): 0</li>
+<li><strong>Maximum of stock in &#x27;products&#x27;</strong> (max): 500</li>
+<li><strong>Sum of rating in &#x27;products&#x27;</strong> (sum): 2,369.80</li>
+<li><strong>Average of rating in &#x27;products&#x27;</strong> (avg): 2.96</li>
+<li><strong>Minimum of rating in &#x27;products&#x27;</strong> (min): 1</li>
+<li><strong>Maximum of rating in &#x27;products&#x27;</strong> (max): 5</li>
+<li><strong>Group counts for supplier in &#x27;products&#x27;</strong> (group_count): 208</li>
+<li><strong>Group counts for supplier in &#x27;products&#x27;</strong> (group_count): 203</li>
+<li><strong>Group counts for supplier in &#x27;products&#x27;</strong> (group_count): 201</li>
+<li><strong>Group counts for supplier in &#x27;products&#x27;</strong> (group_count): 188</li>
+</ul>
+
+<p>_All values are pre-computed and verified._</p>
+<details style="margin-top:12px;border:1px solid #1e293b;border-radius:10px;overflow:hidden"><summary style="cursor:pointer;padding:8px 12px;background:#0b1224;font-size:11px;color:#93c5fd">Show facts JSON</summary><pre style="margin:0;padding:12px;max-height:220px;overflow:auto;background:#0a1228;color:#cbd5e1;font-size:11px">[
+  {
+    &quot;id&quot;: &quot;orders__count&quot;,
+    &quot;kind&quot;: &quot;count&quot;,
+    &quot;value&quot;: 2000,
+    &quot;formatted&quot;: &quot;2,000&quot;,
+    &quot;provenance&quot;: {
+      &quot;sql&quot;: &quot;SELECT COUNT(*) AS value FROM orders&quot;,
+      &quot;description&quot;: &quot;Row count for &#x27;orders&#x27;&quot;
+    },
+    &quot;tolerance&quot;: null
+  },
+  {
+    &quot;id&quot;: &quot;orders__amount__sum&quot;,
+    &quot;kind&quot;: &quot;sum&quot;,
+    &quot;value&quot;: 2058964.7000000037,
+    &quot;formatted&quot;: &quot;2,058,964.70&quot;,
+    &quot;provenance&quot;: {
+      &quot;sql&quot;: &quot;SELECT SUM(amount) AS value FROM orders&quot;,
+      &quot;description&quot;: &quot;Sum of amount in &#x27;orders&#x27;&quot;
+    },
+    &quot;tolerance&quot;: null
+  },
+  {
+    &quot;id&quot;: &quot;orders__amount__avg&quot;,
+    &quot;kind&quot;: &quot;avg&quot;,
+    &quot;value&quot;: 1029.4823500000018,
+    &quot;formatted&quot;: &quot;1,029.48&quot;,
+    &quot;provenance&quot;: {
+      &quot;sql&quot;: &quot;SELECT AVG(amount) AS value FROM orders&quot;,
+      &quot;description&quot;: &quot;Average of amount in &#x27;orders&#x27;&quot;
+    },
+    &quot;tolerance&quot;: null
+  },
+  {
+    &quot;id&quot;: &quot;orders__amount__min&quot;,
+    &quot;kind&quot;: &quot;min&quot;,
+    &quot;value&quot;: 11.99,
+    &quot;formatted&quot;: &quot;11.99&quot;,
+    &quot;provenance&quot;: {
+      &quot;sql&quot;: &quot;SELECT MIN(amount) AS value FROM orders&quot;,
+      &quot;description&quot;: &quot;Minimum of amount in &#x27;orders&#x27;&quot;
+    },
+    &quot;tolerance&quot;: null
+  },
+  {
+    &quot;id&quot;: &quot;orders__amount__max&quot;,
+    &quot;kind&quot;: &quot;max&quot;,
+    &quot;value&quot;: 1999.15,
+    &quot;formatted&quot;: &quot;1,999.15&quot;,
+    &quot;provenance&quot;: {
+      &quot;sql&quot;: &quot;SELECT MAX(amount) AS value FROM orders&quot;,
+      &quot;description&quot;: &quot;Maximum of amount in &#x27;orders&#x27;&quot;
+    },
+    &quot;tolerance&quot;: null
+  },
+  {
+    &quot;id&quot;: &quot;orders__region__group_count__0&quot;,
+    &quot;kind&quot;: &quot;group_count&quot;,
+    &quot;value&quot;: 525,
+    &quot;formatted&quot;: &quot;525&quot;,
+    &quot;provenance&quot;: {
+      &quot;sql&quot;: &quot;SELECT region AS grp, COUNT(*) AS value FROM orders GROUP BY region ORDER BY value DESC LIMIT 5&quot;,
+      &quot;description&quot;: &quot;Group counts for region in &#x27;orders&#x27;&quot;,
+      &quot;group&quot;: &quot;South&quot;
+    },
+    &quot;tolerance&quot;: null
+  },
+  {
+    &quot;id&quot;: &quot;orders__region__group_count__1&quot;,
+    &quot;kind&quot;: &quot;group_count&quot;,
+    &quot;value&quot;: 505,
+    &quot;formatted&quot;: &quot;505&quot;,
+    &quot;provenance&quot;: {
+      &quot;sql&quot;: &quot;SELECT region AS grp, COUNT(*) AS value FROM orders GROUP BY region ORDER BY value DESC LIMIT 5&quot;,
+      &quot;description&quot;: &quot;Group counts for region in &#x27;orders&#x27;&quot;,
+      &quot;group&quot;: &quot;North&quot;
+    },
+    &quot;tolerance&quot;: null
+  },
+  {
+    &quot;id&quot;: &quot;orders__region__group_count__2&quot;,
+    &quot;kind&quot;: &quot;group_count&quot;,
+    &quot;value&quot;: 488,
+    &quot;formatted&quot;: &quot;488&quot;,
+    &quot;provenance&quot;: {
+      &quot;sql&quot;: &quot;SELECT region AS grp, COUNT(*) AS value FROM orders GROUP BY region ORDER BY value DESC LIMIT 5&quot;,
+      &quot;description&quot;: &quot;Group counts for region in &#x27;orders&#x27;&quot;,
+      &quot;group&quot;: &quot;West&quot;
+    },
+    &quot;tolerance&quot;: null
+  },
+  {
+    &quot;id&quot;: &quot;orders__region__group_count__3&quot;,
+    &quot;kind&quot;: &quot;group_count&quot;,
+    &quot;value&quot;: 482,
+    &quot;formatted&quot;: &quot;482&quot;,
+    &quot;provenance&quot;: {
+      &quot;sql&quot;: &quot;SELECT region AS grp, COUNT(*) AS value FROM orders GROUP BY region ORDER BY value DESC LIMIT 5&quot;,
+      &quot;description&quot;: &quot;Group counts for region in &#x27;orders&#x27;&quot;,
+      &quot;group&quot;: &quot;East&quot;
+    },
+    &quot;tolerance&quot;: null
+  },
+  {
+    &quot;id&quot;: &quot;orders__region__topk__0&quot;,
+    &quot;kind&quot;: &quot;topk&quot;,
+    &quot;value&quot;: 525,
+    &quot;formatted&quot;: &quot;525&quot;,
+    &quot;provenance&quot;: {
+      &quot;sql&quot;: &quot;SELECT region AS grp, COUNT(*) AS value FROM orders GROUP BY region ORDER BY value DESC LIMIT 5&quot;,
+      &quot;description&quot;: &quot;Top 5 values of region in &#x27;orders&#x27;&quot;,
+      &quot;group&quot;: &quot;South&quot;
+    },
+    &quot;tolerance&quot;: null
+  }
+]</pre></details></div></div>
+<footer>How it works: each chart is one <code>create_visualization(datasets_json, question, chart_type)</code> call. Dashboard = N calls in parallel (ThreadPoolExecutor) + stitch Vega specs into one HTML grid. Tool itself is single-chart by design (deterministic DuckDB aggregation → Vega-Lite spec); composition is done in your app layer. Embed via <code>&lt;iframe src="dashboard.html" width="100%" height="900"&gt;</code>. See <code>outputs/samples_30.html</code> for 30 individual samples.</footer></body></html>
