@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Tools Live Demo — ChatGPT style</title>
+<script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+  :root { --bg:#0f0f0f; --panel:#1a1a1a; --border:#2a2a2a; --text:#ececec; --muted:#9a9a9a; --accent:#10a37f; --accent2:#5436da; --bubble-user:#2a2a2a; --bubble-assistant:#1e1e1e; }
+  *{box-sizing:border-box} html,body{height:100%;margin:0;font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--text);background:var(--bg)}
+  .layout{display:flex;height:100vh}
+  /* sidebar */
+  .sidebar{width:280px;background:#0a0a0a;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+  .sidebar h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:16px 16px 8px;margin:0}
+  .presets{overflow:auto;padding:0 8px 12px;flex:1}
+  .preset{width:100%;text-align:left;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:10px;margin:6px 0;cursor:pointer;font-size:13px;line-height:1.3}
+  .preset:hover{border-color:#3a3a3a;background:#222}
+  .preset small{color:var(--muted);display:block;margin-top:4px;font-size:11px}
+  .sidebar-foot{padding:12px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)}
+  /* main */
+  .main{flex:1;display:flex;flex-direction:column;min-width:0}
+  .topbar{height:48px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:rgba(15,15,15,.9);backdrop-filter:blur(6px)}
+  .topbar h1{font-size:14px;font-weight:600;margin:0}
+  .topbar .badge{font-size:11px;color:var(--muted);border:1px solid var(--border);padding:4px 8px;border-radius:999px}
+  .chat{flex:1;overflow:auto;padding:24px 0}
+  .thread{max-width:760px;margin:0 auto;padding:0 16px}
+  .msg{display:flex;gap:12px;padding:16px 0;border-bottom:1px solid #1e1e1e}
+  .avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+  .avatar.user{background:#3a3a3a}
+  .avatar.assistant{background:var(--accent);color:#fff}
+  .bubble{flex:1;min-width:0}
+  .bubble .role{font-size:12px;color:var(--muted);margin-bottom:6px}
+  .bubble .content{font-size:14px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+  .bubble .content p{margin:0 0 8px}
+  .bubble .content pre{background:#111;border:1px solid var(--border);padding:10px;border-radius:8px;overflow:auto;font-size:12px}
+  .bubble .content code{font-family: ui-monospace, SFMono-Regular, Menlo, monospace}
+  .status{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px;margin:6px 0}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1s infinite}
+  @keyframes pulse{0%{opacity:1}50%{opacity:.4}100%{opacity:1}}
+  .facts{margin-top:10px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+  .facts summary{cursor:pointer;padding:10px 12px;background:var(--panel);font-size:12px;color:var(--muted);list-style:none}
+  .facts summary::-webkit-details-marker{display:none}
+  .facts pre{margin:0;padding:12px;font-size:11px;overflow:auto;max-height:260px;background:#0f0f0f}
+  .chart-wrap{margin-top:12px;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#fff}
+  .chart-wrap .chart-head{padding:8px 12px;font-size:12px;color:#333;background:#f6f6f6;border-bottom:1px solid #e5e5e5;display:flex;justify-content:space-between}
+  /* composer */
+  .composer{border-top:1px solid var(--border);background:var(--bg);padding:12px 16px}
+  .composer-inner{max-width:760px;margin:0 auto;display:flex;gap:8px;align-items:flex-end}
+  .composer textarea{flex:1;min-height:44px;max-height:120px;resize:none;background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:12px;padding:12px 14px;font-size:14px;outline:none}
+  .composer textarea:focus{border-color:#3a3a3a}
+  .btn{border:none;border-radius:10px;padding:10px 14px;font-size:13px;font-weight:600;cursor:pointer}
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-primary:disabled{opacity:.5;cursor:not-allowed}
+  .btn-ghost{background:var(--panel);color:var(--text);border:1px solid var(--border)}
+  .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .chip{font-size:11px;border:1px solid var(--border);background:var(--panel);color:var(--muted);padding:6px 10px;border-radius:999px;cursor:pointer}
+  .chip.active{border-color:var(--accent);color:var(--text)}
+  .datasets-editor{margin-top:8px}
+  .datasets-editor textarea{width:100%;min-height:90px;background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:10px;font-family:ui-monospace,monospace;font-size:11px}
+  .hint{font-size:11px;color:var(--muted);margin-top:6px}
+  @media(max-width:900px){.sidebar{display:none}}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <h2>Presets — click to load</h2>
+    <div id="presets" class="presets"></div>
+    <div class="sidebar-foot">Tip: edit datasets JSON below, then Send. SSE streams tool stages + markdown tokens + Vega chart.</div>
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <h1>Tools Live Demo</h1>
+      <span class="badge" id="health">checking…</span>
+    </div>
+    <div id="chat" class="chat"><div id="thread" class="thread"></div></div>
+    <div class="composer">
+      <div class="composer-inner" style="flex-direction:column;align-items:stretch">
+        <div class="row" id="toolRow">
+          <button class="chip active" data-tool="auto">Auto</button>
+          <button class="chip" data-tool="markdown">Markdown</button>
+          <button class="chip" data-tool="visualization">Visualization</button>
+          <span style="flex:1"></span>
+          <label class="hint" style="display:flex;align-items:center;gap:6px">Chart:
+            <select id="chartType" style="background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:4px 8px;font-size:12px">
+              <option value="auto">auto</option><option value="bar">bar</option><option value="line">line</option><option value="pie">pie</option><option value="scatter">scatter</option>
+            </select>
+          </label>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <textarea id="q" placeholder="Ask anything — e.g. Summarize total amount by region, or Show revenue trend as a line chart…"></textarea>
+          <button id="send" class="btn btn-primary">Send</button>
+          <button id="stop" class="btn btn-ghost" style="display:none">Stop</button>
+        </div>
+        <details class="datasets-editor">
+          <summary style="font-size:12px;color:var(--muted);cursor:pointer">Datasets JSON (inline_json) — edit before sending</summary>
+          <textarea id="datasets"></textarea>
+          <div class="hint">Format: [{"kind":"inline_json","name":"orders","data":[{...}]}]. Leave as-is to use preset.</div>
+        </details>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+const thread = $('#thread'), chat = $('#chat'), qEl = $('#q'), dsEl = $('#datasets'), sendBtn = $('#send'), stopBtn = $('#stop'), healthEl = $('#health');
+let tool = 'auto', chartType = 'auto', currentPreset = null, abortCtrl = null;
+
+document.querySelectorAll('.chip[data-tool]').forEach(c=>{
+  c.addEventListener('click', ()=>{
+    document.querySelectorAll('.chip[data-tool]').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active'); tool = c.dataset.tool;
+  });
+});
+$('#chartType').addEventListener('change', e=> chartType = e.target.value);
+
+async function loadPresets(){
+  const r = await fetch('/api/presets'); const list = await r.json();
+  const box = $('#presets');
+  list.forEach(p=>{
+    const b = document.createElement('button'); b.className='preset';
+    b.innerHTML = `${p.label}<small>${p.tool} · ${p.question.slice(0,64)}</small>`;
+    b.addEventListener('click', ()=>{
+      currentPreset = p;
+      qEl.value = p.question;
+      dsEl.value = JSON.stringify(p.datasets, null, 2);
+      tool = p.tool; document.querySelectorAll('.chip[data-tool]').forEach(x=>x.classList.toggle('active', x.dataset.tool===tool));
+      // auto chart hint
+      if(p.tool==='visualization'){
+        const q=p.question.toLowerCase();
+        if(q.includes('line')||q.includes('trend')) chartType='line';
+        else if(q.includes('pie')||q.includes('distribution')) chartType='pie';
+        else if(q.includes('scatter')) chartType='scatter';
+        else chartType='auto';
+        $('#chartType').value=chartType;
+      }
+    });
+    box.appendChild(b);
+  });
+  if(list[0]){ currentPreset=list[0]; qEl.value=list[0].question; dsEl.value=JSON.stringify(list[0].datasets,null,2); tool=list[0].tool; document.querySelectorAll('.chip[data-tool]').forEach(x=>x.classList.toggle('active', x.dataset.tool===tool)); }
+}
+async function checkHealth(){
+  try{ const r=await fetch('/health'); const j=await r.json(); healthEl.textContent=j.status==='ok'?'● live':'● error'; healthEl.style.color=j.status==='ok'?'#10a37f':'#e55'; }catch{ healthEl.textContent='● offline'; healthEl.style.color='#e55'; }
+}
+function addMsg(role, html){
+  const wrap=document.createElement('div'); wrap.className='msg';
+  const av=document.createElement('div'); av.className='avatar '+(role==='user'?'user':'assistant'); av.textContent=role==='user'?'U':'A';
+  const bub=document.createElement('div'); bub.className='bubble';
+  const r=document.createElement('div'); r.className='role'; r.textContent=role==='user'?'You':'Assistant';
+  const c=document.createElement('div'); c.className='content'; c.innerHTML=html;
+  bub.appendChild(r); bub.appendChild(c); wrap.appendChild(av); wrap.appendChild(bub); thread.appendChild(wrap); chat.scrollTop=chat.scrollHeight; return c;
+}
+function mdToHtml(md){ try{ return marked.parse(md); }catch{ return '<pre>'+escapeHtml(md)+'</pre>'; } }
+function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+async function send(){
+  const question = qEl.value.trim(); if(!question) return;
+  let datasets; try{ datasets = JSON.parse(dsEl.value); if(!Array.isArray(datasets)) throw new Error('datasets must be array'); }catch(e){ alert('Datasets JSON invalid: '+e.message); return; }
+  const userHtml = escapeHtml(question) + '<div style="margin-top:8px;font-size:11px;color:var(--muted)">tool: '+tool+' · chart: '+chartType+' · datasets: '+datasets.map(d=>d.name).join(', ')+'</div>';
+  addMsg('user', userHtml);
+  const assistantContent = addMsg('assistant', '<div class="status"><span class="dot"></span><span id="statusText">Starting…</span></div><div id="streamMd" style="margin-top:8px"></div><div id="chartMount"></div><div id="factsMount"></div>');
+  const statusText = assistantContent.querySelector('#statusText');
+  const streamMd = assistantContent.querySelector('#streamMd');
+  const chartMount = assistantContent.querySelector('#chartMount');
+  const factsMount = assistantContent.querySelector('#factsMount');
+  let mdBuf = '', chartSpec=null, facts=null, warnings=null, meta=null;
+  sendBtn.disabled=true; stopBtn.style.display='inline-block';
+  abortCtrl = new AbortController();
+  try{
+    const resp = await fetch('/api/chat/stream', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({question, datasets, tool, chart_type: chartType, options:{}}),
+      signal: abortCtrl.signal
+    });
+    if(!resp.ok || !resp.body){ throw new Error('Stream failed: '+resp.status); }
+    const reader = resp.body.getReader(); const decoder = new TextDecoder();
+    let buf='';
+    while(true){
+      const {done, value} = await reader.read(); if(done) break;
+      buf += decoder.decode(value, {stream:true});
+      let idx;
+      while((idx = buf.indexOf('\n\n')) !== -1){
+        const chunk = buf.slice(0, idx); buf = buf.slice(idx+2);
+        const lines = chunk.split('\n');
+        let event='message', data='';
+        for(const line of lines){
+          if(line.startsWith('event:')) event=line.slice(6).trim();
+          else if(line.startsWith('data:')) data+=line.slice(5).trim();
+        }
+        if(!data) continue;
+        let payload; try{ payload=JSON.parse(data); }catch{ continue; }
+        if(event==='tool'){ statusText.textContent = 'Tool: '+payload.tool+' — running…'; }
+        else if(event==='status'){ statusText.textContent = payload.label || payload.stage; }
+        else if(event==='markdown_chunk'){ mdBuf += payload.text; streamMd.innerHTML = mdToHtml(mdBuf); chat.scrollTop=chat.scrollHeight; }
+        else if(event==='chart'){ chartSpec=payload.chart_spec; meta=payload.meta; statusText.textContent='Rendering chart…';
+          const wrap=document.createElement('div'); wrap.className='chart-wrap';
+          wrap.innerHTML='<div class="chart-head"><span>'+(meta.chart_type||'')+' · '+(meta.x_field||'')+' → '+(meta.y_field||'')+'</span><span>'+(meta.row_count||0)+' rows</span></div><div id="vega-'+Date.now()+'"></div>';
+          chartMount.appendChild(wrap);
+          const vegaDiv = wrap.lastElementChild;
+          try{ await vegaEmbed(vegaDiv, chartSpec, {actions:false}); }catch(e){ vegaDiv.innerHTML='<pre style="padding:12px;color:#c00">'+escapeHtml(String(e))+'</pre>'; }
+        }
+        else if(event==='facts'){ facts=payload.facts; }
+        else if(event==='warnings'){ warnings=payload.warnings; }
+        else if(event==='meta'){ meta=payload.meta; }
+        else if(event==='error'){ const e=document.createElement('div'); e.style.cssText='margin-top:8px;padding:10px;background:#2a1111;border:1px solid #5a2222;border-radius:8px;color:#ffb4b4;font-size:12px'; e.textContent='Error: '+(payload.message||JSON.stringify(payload)); assistantContent.appendChild(e); }
+        else if(event==='done'){
+          statusText.textContent = 'Done — '+payload.elapsed_ms+' ms'+(meta&&meta.verified!==undefined?' · verified: '+meta.verified:'');
+          statusText.previousElementSibling.style.background = '#10a37f';
+          // facts accordion
+          if(facts && facts.length){
+            const det=document.createElement('details'); det.className='facts'; det.open=false;
+            det.innerHTML='<summary>Facts ('+facts.length+') — click to expand</summary><pre>'+escapeHtml(JSON.stringify(facts,null,2))+'</pre>';
+            factsMount.appendChild(det);
+          }
+          if(warnings && warnings.length){
+            const w=document.createElement('div'); w.style.cssText='margin-top:8px;font-size:11px;color:#c9a86a'; w.textContent='Warnings: '+warnings.join(' · ');
+            factsMount.appendChild(w);
+          }
+          if(meta){
+            const m=document.createElement('div'); m.style.cssText='margin-top:8px;font-size:11px;color:var(--muted)'; m.textContent='Meta: '+JSON.stringify(meta);
+            factsMount.appendChild(m);
+          }
+        }
+      }
+    }
+  }catch(e){
+    if(e.name!=='AbortError'){ const err=document.createElement('div'); err.style.cssText='margin-top:8px;color:#ffb4b4;font-size:12px'; err.textContent='Stream error: '+e.message; assistantContent.appendChild(err); statusText.textContent='Error'; }
+    else { statusText.textContent='Stopped'; }
+  }finally{
+    sendBtn.disabled=false; stopBtn.style.display='none'; abortCtrl=null; chat.scrollTop=chat.scrollHeight;
+  }
+}
+sendBtn.addEventListener('click', send);
+stopBtn.addEventListener('click', ()=>{ if(abortCtrl) abortCtrl.abort(); });
+qEl.addEventListener('keydown', e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); }});
+loadPresets(); checkHealth(); setInterval(checkHealth, 8000);
+</script>
+</body>
+</html>
