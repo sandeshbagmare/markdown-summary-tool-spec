@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>08 Employees Tenure</title>
+<script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+<style>
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem;color:#1a2744;line-height:1.6}
+  h1{color:#1a2744;border-bottom:3px solid #2e86ab;padding-bottom:.5rem}
+  h2{color:#2e86ab;margin-top:2rem}
+  #vis{margin:1.5rem 0;padding:1rem;border:1px solid #e2e8f0;border-radius:8px;background:#f7f9fb}
+  .meta{font-size:.85rem;color:#64748b;background:#f1f5f9;padding:.75rem;border-radius:6px;margin:1rem 0}
+  .facts{font-size:.9rem}
+  .facts li{margin:.25rem 0}
+  pre{background:#f1f5f9;padding:.75rem;border-radius:6px;overflow:auto}
+  code{background:#e2e8f0;padding:.15rem .35rem;border-radius:3px;font-size:.9em}
+  ul{padding-left:1.5rem}
+</style>
+</head>
+<body>
+<h1>08 Employees Tenure</h1>
+<p class="meta"><strong>Question:</strong> Summarize tenure distribution and salary correlation &nbsp;|&nbsp; <strong>Chart:</strong> Scatter plot of tenure vs salary (scatter) &nbsp;|&nbsp; <strong>Generated:</strong> 2026-10-14T10:37:55.671058 &nbsp;|&nbsp; <strong>Model:</strong> claude-fable-5.1 (MockLLMClient) &nbsp;|&nbsp; <strong>Verified:</strong> True</p>
+<div id="vis"></div>
+<script>
+const spec = {"$schema": "https://vega.github.io/schema/vega-lite/v5.json", "width": 400, "height": 300, "data": {"values": [{"salary": 62121.26, "tenure_years": 13}, {"salary": 42924.03, "tenure_years": 1}, {"salary": 94344.24, "tenure_years": 10}, {"salary": 132250.39, "tenure_years": 5}, {"salary": 70466.0, "tenure_years": 10}, {"salary": 49653.22, "tenure_years": 13}, {"salary": 135435.64, "tenure_years": 12}, {"salary": 30791.4, "tenure_years": 14}, {"salary": 138647.84, "tenure_years": 2}, {"salary": 45149.96, "tenure_years": 0}, {"salary": 139338.07, "tenure_years": 18}, {"salary": 61838.6, "tenure_years": 1}, {"salary": 71215.46, "tenure_years": 15}, {"salary": 128552.65, "tenure_years": 20}, {"salary": 97777.68, "tenure_years": 10}, {"salary": 77788.58, "tenure_years": 20}, {"salary": 82126.4, "tenure_years": 17}, {"salary": 136811.83, "tenure_years": 15}, {"salary": 110216.43, "tenure_years": 11}, {"salary": 33820.96, "tenure_years": 20}, {"salary": 117099.34, "tenure_years": 2}, {"salary": 108968.9, "tenure_years": 5}, {"salary": 70429.94, "tenure_years": 12}, {"salary": 116773.6, "tenure_years": 12}, {"salary": 123448.63, "tenure_years": 0}, {"salary": 100344.21, "tenure_years": 20}, {"salary": 31539.49, "tenure_years": 11}, {"salary": 78686.26, "tenure_years": 16}, {"salary": 106656.1, "tenure_years": 15}, {"salary": 95300.41, "tenure_years": 5}, {"salary": 149034.93, "tenure_years": 14}, {"salary": 120198.02, "tenure_years": 1}, {"salary": 46167.31, "tenure_years": 6}, {"salary": 60763.48, "tenure_years": 11}, {"salary": 144560.65, "tenure_years": 20}, {"salary": 30042.64, "tenure_years": 19}, {"salary": 91238.43, "tenure_years": 2}, {"salary": 81984.04, "tenure_years": 0}, {"salary": 75295.06, "tenure_years": 17}, {"salary": 33496.42, "tenure_years": 10}, {"salary": 144691.93, "tenure_years": 1}, {"salary": 70179.66, "tenure_years": 11}, {"salary": 106695.35, "tenure_years": 5}, {"salary": 37709.58, "tenure_years": 4}, {"salary": 110251.3, "tenure_years": 2}, {"salary": 120967.55, "tenure_years": 12}, {"salary": 66739.65, "tenure_years": 20}, {"salary": 123135.96, "tenure_years": 12}, {"salary": 45176.4, "tenure_years": 10}, {"salary": 44347.95, "tenure_years": 5}, {"salary": 76349.54, "tenure_years": 1}, {"salary": 84568.87, "tenure_years": 0}, {"salary": 83966.87, "tenure_years": 14}, {"salary": 81481.05, "tenure_years": 0}, {"salary": 92590.89, "tenure_years": 16}, {"salary": 96789.4, "tenure_years": 10}, {"salary": 42573.3, "tenure_years": 11}, {"salary": 137212.03, "tenure_years": 10}, {"salary": 62610.17, "tenure_years": 16}, {"salary": 54392.65, "tenure_years": 10}, {"salary": 77780.42, "tenure_years": 16}, {"salary": 144735.19, "tenure_years": 16}, {"salary": 120973.82, "tenure_years": 0}, {"salary": 62189.98, "tenure_years": 7}, {"salary": 102012.23, "tenure_years": 2}, {"salary": 96544.16, "tenure_years": 4}, {"salary": 46253.52, "tenure_years": 15}, {"salary": 117667.24, "tenure_years": 0}, {"salary": 115651.59, "tenure_years": 18}, {"salary": 70862.61, "tenure_years": 7}, {"salary": 140995.08, "tenure_years": 19}, {"salary": 137792.19, "tenure_years": 19}, {"salary": 146442.16, "tenure_years": 10}, {"salary": 44677.96, "tenure_years": 1}, {"salary": 133397.65, "tenure_years": 11}, {"salary": 67860.79, "tenure_years": 6}, {"salary": 71163.99, "tenure_years": 6}, {"salary": 75884.94, "tenure_years": 1}, {"salary": 75040.21, "tenure_years": 8}, {"salary": 132759.78, "tenure_years": 12}, {"salary": 38299.11, "tenure_years": 9}, {"salary": 138985.52, "tenure_years": 16}, {"salary": 68668.08, "tenure_years": 12}, {"salary": 100316.27, "tenure_years": 9}, {"salary": 85865.77, "tenure_years": 10}, {"salary": 107620.3, "tenure_years": 8}, {"salary": 97531.98, "tenure_years": 11}, {"salary": 143854.59, "tenure_years": 14}, {"salary": 98995.03, "tenure_years": 8}, {"salary": 144582.56, "tenure_years": 5}, {"salary": 32389.47, "tenure_years": 15}, {"salary": 87278.61, "tenure_years": 1}, {"salary": 149776.11, "tenure_years": 4}, {"salary": 134456.07, "tenure_years": 7}, {"salary": 133672.68, "tenure_years": 14}, {"salary": 137949.9, "tenure_years": 19}, {"salary": 114689.87, "tenure_years": 0}, {"salary": 117581.32, "tenure_years": 7}, {"salary": 134590.46, "tenure_years": 9}, {"salary": 149451.62, "tenure_years": 11}]}, "mark": "point", "encoding": {"x": {"field": "salary", "type": "quantitative"}, "y": {"field": "tenure_years", "type": "quantitative"}, "tooltip": [{"field": "salary", "type": "quantitative"}, {"field": "tenure_years", "type": "quantitative"}]}};
+vegaEmbed('#vis', spec, {actions:false}).catch(e=>{document.getElementById('vis').innerHTML='<p style=color:red>Chart error: '+e.message+'</p>'});
+</script>
+<h2>Summary</h2>
+<div class="facts">
+<h2>Summary</h2>
+
+<ul>
+<li><strong>Row count for 'employees'<b> (count): 500</li>
+<li><strong>Group counts for dept in 'employees'<b> (group_count): 121</li>
+<li><strong>Group counts for dept in 'employees'<b> (group_count): 100</li>
+<li><strong>Group counts for dept in 'employees'<b> (group_count): 100</li>
+<li><strong>Group counts for dept in 'employees'<b> (group_count): 90</li>
+<li><strong>Group counts for dept in 'employees'<b> (group_count): 89</li>
+<li><strong>Sum of salary in 'employees'<b> (sum): 45,336,097.32</li>
+<li><strong>Average of salary in 'employees'<b> (avg): 90,672.19</li>
+<li><strong>Minimum of salary in 'employees'<b> (min): 30,014.1</li>
+<li><strong>Maximum of salary in 'employees'<b> (max): 149,776</li>
+<li><strong>Sum of tenure_years in 'employees'<b> (sum): 4,853</li>
+<li><strong>Average of tenure_years in 'employees'<b> (avg): 9.71</li>
+<li><strong>Minimum of tenure_years in 'employees'<b> (min): 0</li>
+<li><strong>Maximum of tenure_years in 'employees'<b> (max): 20</li>
+</ul>
+
+<p>_All values are pre-computed and verified._</p>
+
+</div>
+<h2>Facts (DuckDB-verified)</h2>
+<ul class="facts">
+<li><code>employees__count</code> (count) = <strong>500</strong> — Row count for &#x27;employees&#x27; </li>
+<li><code>employees__dept__group_count__0</code> (group_count) = <strong>121</strong> — Group counts for dept in &#x27;employees&#x27; </li>
+<li><code>employees__dept__group_count__1</code> (group_count) = <strong>100</strong> — Group counts for dept in &#x27;employees&#x27; </li>
+<li><code>employees__dept__group_count__2</code> (group_count) = <strong>100</strong> — Group counts for dept in &#x27;employees&#x27; </li>
+<li><code>employees__dept__group_count__3</code> (group_count) = <strong>90</strong> — Group counts for dept in &#x27;employees&#x27; </li>
+<li><code>employees__dept__group_count__4</code> (group_count) = <strong>89</strong> — Group counts for dept in &#x27;employees&#x27; </li>
+<li><code>employees__salary__sum</code> (sum) = <strong>45,336,097.32</strong> — Sum of salary in &#x27;employees&#x27; </li>
+<li><code>employees__salary__avg</code> (avg) = <strong>90,672.19</strong> — Average of salary in &#x27;employees&#x27; </li>
+<li><code>employees__salary__min</code> (min) = <strong>30,014.1</strong> — Minimum of salary in &#x27;employees&#x27; </li>
+<li><code>employees__salary__max</code> (max) = <strong>149,776</strong> — Maximum of salary in &#x27;employees&#x27; </li>
+<li><code>employees__tenure_years__sum</code> (sum) = <strong>4,853</strong> — Sum of tenure_years in &#x27;employees&#x27; </li>
+<li><code>employees__tenure_years__avg</code> (avg) = <strong>9.71</strong> — Average of tenure_years in &#x27;employees&#x27; </li>
+<li><code>employees__tenure_years__min</code> (min) = <strong>0</strong> — Minimum of tenure_years in &#x27;employees&#x27; </li>
+<li><code>employees__tenure_years__max</code> (max) = <strong>20</strong> — Maximum of tenure_years in &#x27;employees&#x27; </li>
+</ul>
+<p class="meta">Facts computed via DuckDB push-down over full data · LLM verbalizes only · Mechanical verifier checks numbers within tolerance · Sanitizer strips HTML/JS</p>
+</body>
+</html>

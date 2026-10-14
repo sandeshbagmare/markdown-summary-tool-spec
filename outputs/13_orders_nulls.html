@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>13 Orders Nulls</title>
+<script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+<style>
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem;color:#1a2744;line-height:1.6}
+  h1{color:#1a2744;border-bottom:3px solid #2e86ab;padding-bottom:.5rem}
+  h2{color:#2e86ab;margin-top:2rem}
+  #vis{margin:1.5rem 0;padding:1rem;border:1px solid #e2e8f0;border-radius:8px;background:#f7f9fb}
+  .meta{font-size:.85rem;color:#64748b;background:#f1f5f9;padding:.75rem;border-radius:6px;margin:1rem 0}
+  .facts{font-size:.9rem}
+  .facts li{margin:.25rem 0}
+  pre{background:#f1f5f9;padding:.75rem;border-radius:6px;overflow:auto}
+  code{background:#e2e8f0;padding:.15rem .35rem;border-radius:3px;font-size:.9em}
+  ul{padding-left:1.5rem}
+</style>
+</head>
+<body>
+<h1>13 Orders Nulls</h1>
+<p class="meta"><strong>Question:</strong> Summarize orders with missing values handled &nbsp;|&nbsp; <strong>Chart:</strong> Bar chart of amount by region (bar) &nbsp;|&nbsp; <strong>Generated:</strong> 2026-10-14T10:37:58.638002 &nbsp;|&nbsp; <strong>Model:</strong> claude-fable-5.1 (MockLLMClient) &nbsp;|&nbsp; <strong>Verified:</strong> True</p>
+<div id="vis"></div>
+<script>
+const spec = {"$schema": "https://vega.github.io/schema/vega-lite/v5.json", "width": 400, "height": 300, "data": {"values": [{"customer": "Customer_0053", "amount": 5012.64}, {"customer": "Customer_0176", "amount": 5007.33}, {"customer": "Customer_0055", "amount": 4836.62}, {"customer": "Customer_0102", "amount": 4771.05}, {"customer": "Customer_0034", "amount": 4749.64}, {"customer": "Customer_0136", "amount": 4708.75}, {"customer": "Customer_0089", "amount": 4584.53}, {"customer": "Customer_0099", "amount": 4546.360000000001}, {"customer": "Customer_0115", "amount": 4527.88}, {"customer": "Customer_0096", "amount": 4225.52}, {"customer": "Customer_0134", "amount": 4178.820000000001}, {"customer": "Customer_0105", "amount": 4158.58}, {"customer": "Customer_0163", "amount": 4151.4400000000005}, {"customer": "Customer_0052", "amount": 3890.7800000000007}, {"customer": "Customer_0077", "amount": 3835.23}, {"customer": "Customer_0199", "amount": 3794.13}, {"customer": "Customer_0011", "amount": 3792.2400000000002}, {"customer": "Customer_0092", "amount": 3776.1700000000005}, {"customer": "Customer_0058", "amount": 3764.74}, {"customer": "Customer_0001", "amount": 3746.45}]}, "mark": "bar", "encoding": {"x": {"field": "customer", "type": "nominal", "axis": {"labelAngle": -30}}, "y": {"field": "amount", "type": "quantitative"}, "tooltip": [{"field": "customer"}, {"field": "amount", "type": "quantitative"}]}};
+vegaEmbed('#vis', spec, {actions:false}).catch(e=>{document.getElementById('vis').innerHTML='<p style=color:red>Chart error: '+e.message+'</p>'});
+</script>
+<h2>Summary</h2>
+<div class="facts">
+<h2>Summary</h2>
+
+<ul>
+<li><strong>Row count for 'orders'<b> (count): 1,000</li>
+<li><strong>Sum of amount in 'orders'<b> (sum): 400,481.10</li>
+<li><strong>Average of amount in 'orders'<b> (avg): 493.81</li>
+<li><strong>Minimum of amount in 'orders'<b> (min): 7.52</li>
+<li><strong>Maximum of amount in 'orders'<b> (max): 998.59</li>
+<li><strong>Group counts for region in 'orders'<b> (group_count): 229</li>
+<li><strong>Group counts for region in 'orders'<b> (group_count): 227</li>
+<li><strong>Group counts for region in 'orders'<b> (group_count): 227</li>
+<li><strong>Group counts for region in 'orders'<b> (group_count): 223</li>
+<li><strong>Group counts for region in 'orders'<b> (group_count): 94</li>
+</ul>
+
+<p>_All values are pre-computed and verified._</p>
+
+</div>
+<h2>Facts (DuckDB-verified)</h2>
+<ul class="facts">
+<li><code>orders__count</code> (count) = <strong>1,000</strong> — Row count for &#x27;orders&#x27; </li>
+<li><code>orders__amount__sum</code> (sum) = <strong>400,481.10</strong> — Sum of amount in &#x27;orders&#x27; </li>
+<li><code>orders__amount__avg</code> (avg) = <strong>493.81</strong> — Average of amount in &#x27;orders&#x27; </li>
+<li><code>orders__amount__min</code> (min) = <strong>7.52</strong> — Minimum of amount in &#x27;orders&#x27; </li>
+<li><code>orders__amount__max</code> (max) = <strong>998.59</strong> — Maximum of amount in &#x27;orders&#x27; </li>
+<li><code>orders__region__group_count__0</code> (group_count) = <strong>229</strong> — Group counts for region in &#x27;orders&#x27; </li>
+<li><code>orders__region__group_count__1</code> (group_count) = <strong>227</strong> — Group counts for region in &#x27;orders&#x27; </li>
+<li><code>orders__region__group_count__2</code> (group_count) = <strong>227</strong> — Group counts for region in &#x27;orders&#x27; </li>
+<li><code>orders__region__group_count__3</code> (group_count) = <strong>223</strong> — Group counts for region in &#x27;orders&#x27; </li>
+<li><code>orders__region__group_count__4</code> (group_count) = <strong>94</strong> — Group counts for region in &#x27;orders&#x27; </li>
+</ul>
+<p class="meta">Facts computed via DuckDB push-down over full data · LLM verbalizes only · Mechanical verifier checks numbers within tolerance · Sanitizer strips HTML/JS</p>
+</body>
+</html>

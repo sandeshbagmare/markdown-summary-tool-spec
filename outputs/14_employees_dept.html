@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>14 Employees Dept</title>
+<script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+<style>
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem;color:#1a2744;line-height:1.6}
+  h1{color:#1a2744;border-bottom:3px solid #2e86ab;padding-bottom:.5rem}
+  h2{color:#2e86ab;margin-top:2rem}
+  #vis{margin:1.5rem 0;padding:1rem;border:1px solid #e2e8f0;border-radius:8px;background:#f7f9fb}
+  .meta{font-size:.85rem;color:#64748b;background:#f1f5f9;padding:.75rem;border-radius:6px;margin:1rem 0}
+  .facts{font-size:.9rem}
+  .facts li{margin:.25rem 0}
+  pre{background:#f1f5f9;padding:.75rem;border-radius:6px;overflow:auto}
+  code{background:#e2e8f0;padding:.15rem .35rem;border-radius:3px;font-size:.9em}
+  ul{padding-left:1.5rem}
+</style>
+</head>
+<body>
+<h1>14 Employees Dept</h1>
+<p class="meta"><strong>Question:</strong> Summarize department headcount and salary statistics &nbsp;|&nbsp; <strong>Chart:</strong> Bar chart of employee count by department (bar) &nbsp;|&nbsp; <strong>Generated:</strong> 2026-10-14T10:37:58.810473 &nbsp;|&nbsp; <strong>Model:</strong> claude-fable-5.1 (MockLLMClient) &nbsp;|&nbsp; <strong>Verified:</strong> True</p>
+<div id="vis"></div>
+<script>
+const spec = {"$schema": "https://vega.github.io/schema/vega-lite/v5.json", "width": 400, "height": 300, "data": {"values": [{"name": "Emp_0092", "salary": 149776.11}, {"name": "Emp_0099", "salary": 149451.62}, {"name": "Emp_0030", "salary": 149034.93}, {"name": "Emp_0207", "salary": 148959.28}, {"name": "Emp_0329", "salary": 148905.98}, {"name": "Emp_0289", "salary": 148618.2}, {"name": "Emp_0160", "salary": 147971.75}, {"name": "Emp_0402", "salary": 147457.25}, {"name": "Emp_0477", "salary": 147414.27}, {"name": "Emp_0169", "salary": 147019.34}, {"name": "Emp_0401", "salary": 147012.49}, {"name": "Emp_0201", "salary": 146911.3}, {"name": "Emp_0113", "salary": 146687.71}, {"name": "Emp_0072", "salary": 146442.16}, {"name": "Emp_0345", "salary": 146344.0}, {"name": "Emp_0457", "salary": 146028.1}, {"name": "Emp_0396", "salary": 145822.15}, {"name": "Emp_0355", "salary": 145736.86}, {"name": "Emp_0131", "salary": 145107.09}, {"name": "Emp_0375", "salary": 144845.75}]}, "mark": "bar", "encoding": {"x": {"field": "name", "type": "nominal", "axis": {"labelAngle": -30}}, "y": {"field": "salary", "type": "quantitative"}, "tooltip": [{"field": "name"}, {"field": "salary", "type": "quantitative"}]}};
+vegaEmbed('#vis', spec, {actions:false}).catch(e=>{document.getElementById('vis').innerHTML='<p style=color:red>Chart error: '+e.message+'</p>'});
+</script>
+<h2>Summary</h2>
+<div class="facts">
+<h2>Summary</h2>
+
+<ul>
+<li><strong>Row count for 'employees'<b> (count): 500</li>
+<li><strong>Group counts for dept in 'employees'<b> (group_count): 121</li>
+<li><strong>Group counts for dept in 'employees'<b> (group_count): 100</li>
+<li><strong>Group counts for dept in 'employees'<b> (group_count): 100</li>
+<li><strong>Group counts for dept in 'employees'<b> (group_count): 90</li>
+<li><strong>Group counts for dept in 'employees'<b> (group_count): 89</li>
+<li><strong>Sum of salary in 'employees'<b> (sum): 45,336,097.32</li>
+<li><strong>Average of salary in 'employees'<b> (avg): 90,672.19</li>
+<li><strong>Minimum of salary in 'employees'<b> (min): 30,014.1</li>
+<li><strong>Maximum of salary in 'employees'<b> (max): 149,776</li>
+<li><strong>Sum of tenure_years in 'employees'<b> (sum): 4,853</li>
+<li><strong>Average of tenure_years in 'employees'<b> (avg): 9.71</li>
+<li><strong>Minimum of tenure_years in 'employees'<b> (min): 0</li>
+<li><strong>Maximum of tenure_years in 'employees'<b> (max): 20</li>
+</ul>
+
+<p>_All values are pre-computed and verified._</p>
+
+</div>
+<h2>Facts (DuckDB-verified)</h2>
+<ul class="facts">
+<li><code>employees__count</code> (count) = <strong>500</strong> — Row count for &#x27;employees&#x27; </li>
+<li><code>employees__dept__group_count__0</code> (group_count) = <strong>121</strong> — Group counts for dept in &#x27;employees&#x27; </li>
+<li><code>employees__dept__group_count__1</code> (group_count) = <strong>100</strong> — Group counts for dept in &#x27;employees&#x27; </li>
+<li><code>employees__dept__group_count__2</code> (group_count) = <strong>100</strong> — Group counts for dept in &#x27;employees&#x27; </li>
+<li><code>employees__dept__group_count__3</code> (group_count) = <strong>90</strong> — Group counts for dept in &#x27;employees&#x27; </li>
+<li><code>employees__dept__group_count__4</code> (group_count) = <strong>89</strong> — Group counts for dept in &#x27;employees&#x27; </li>
+<li><code>employees__salary__sum</code> (sum) = <strong>45,336,097.32</strong> — Sum of salary in &#x27;employees&#x27; </li>
+<li><code>employees__salary__avg</code> (avg) = <strong>90,672.19</strong> — Average of salary in &#x27;employees&#x27; </li>
+<li><code>employees__salary__min</code> (min) = <strong>30,014.1</strong> — Minimum of salary in &#x27;employees&#x27; </li>
+<li><code>employees__salary__max</code> (max) = <strong>149,776</strong> — Maximum of salary in &#x27;employees&#x27; </li>
+<li><code>employees__tenure_years__sum</code> (sum) = <strong>4,853</strong> — Sum of tenure_years in &#x27;employees&#x27; </li>
+<li><code>employees__tenure_years__avg</code> (avg) = <strong>9.71</strong> — Average of tenure_years in &#x27;employees&#x27; </li>
+<li><code>employees__tenure_years__min</code> (min) = <strong>0</strong> — Minimum of tenure_years in &#x27;employees&#x27; </li>
+<li><code>employees__tenure_years__max</code> (max) = <strong>20</strong> — Maximum of tenure_years in &#x27;employees&#x27; </li>
+</ul>
+<p class="meta">Facts computed via DuckDB push-down over full data · LLM verbalizes only · Mechanical verifier checks numbers within tolerance · Sanitizer strips HTML/JS</p>
+</body>
+</html>
