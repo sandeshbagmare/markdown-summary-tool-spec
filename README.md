@@ -29,9 +29,19 @@
 
 ```powershell
 pip install -e ".[dev]"
-pytest -q                          # 8 tests
+pytest -q                          # 16 tests
 python examples/demo.py            # end-to-end demo
 uvicorn markdown_summary_tool.gateway.app:app --reload  # API at /docs
+
+# DeepAgent tools (both summary + visualization) — mock mode if no keys
+python examples/deepagent_example.py
+python examples/stress_test.py     # 10k orders + 1k products, 6 checks
+
+# With a real LLM (OpenAI-compatible endpoint)
+$env:API_BASE="https://api.example.com/v1"
+$env:API_KEY="sk-..."
+pip install -e ".[deepagent]"      # langchain-core + deepagents
+python examples/deepagent_example.py  # uses model claude-fable-5.1
 ```
 
 ```
@@ -43,9 +53,13 @@ src/markdown_summary_tool/
   profiler/    row/column stats, cardinality, 5-row sample
   engine/      DuckDB push-down + pipeline orchestration
   facts/       deterministic planner + SQL fact computation
-  llm/         MockLLM + OpenAI-compatible client, prompt templates
+  llm/         MockLLM + OpenAI-compatible client (API_BASE/API_KEY, claude-fable-5.1)
   verifier/    regex number extraction + mechanical verification + repair
   sanitizer/   HTML/URI/event-handler stripping + column redaction
+  tools/       DeepAgent wrapper: create_markdown_summary (@tool fallback)
+src/visualization_tool/
+  tool.py      DeepAgent wrapper: create_visualization (DuckDB + Vega-Lite)
+  models.py    VisualizationRequest/Response schemas
 ```
 
 ## Rebuild the PDF

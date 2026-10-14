@@ -8,10 +8,13 @@ those numbers.
 from __future__ import annotations
 
 import json
+import os
 from abc import ABC, abstractmethod
 from typing import Any
 
 from markdown_summary_tool.llm.prompts import SYSTEM_PROMPT
+
+DEFAULT_MODEL = "claude-fable-5.1"
 
 
 class LLMClient(ABC):
@@ -76,7 +79,7 @@ class OpenAICompatibleClient(LLMClient):
     def __init__(
         self,
         api_key: str,
-        model: str = "gpt-4o-mini",
+        model: str = DEFAULT_MODEL,
         base_url: str = "https://api.openai.com/v1",
         timeout: float = 30.0,
     ) -> None:
@@ -122,3 +125,21 @@ class OpenAICompatibleClient(LLMClient):
             return data["choices"][0]["message"]["content"] or ""
         except (KeyError, IndexError, TypeError) as exc:
             raise RuntimeError(f"Unexpected chat completions response shape: {data!r}") from exc
+
+
+def get_llm_client() -> LLMClient:
+    """Return an LLM client based on environment variables.
+
+    If both API_BASE and API_KEY are set, returns an OpenAICompatibleClient
+    pointed at that endpoint with model claude-fable-5.1. Otherwise returns
+    a MockLLMClient for offline / test use.
+    """
+    api_base = os.environ.get("API_BASE", "").strip()
+    api_key = os.environ.get("API_KEY", "").strip()
+    if api_base and api_key:
+        return OpenAICompatibleClient(
+            api_key=api_key,
+            base_url=api_base,
+            model=DEFAULT_MODEL,
+        )
+    return MockLLMClient()
