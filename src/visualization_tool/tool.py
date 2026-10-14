@@ -36,6 +36,11 @@ except ImportError:
             fn.name = fn.__name__  # type: ignore[attr-defined]
             fn.description = (fn.__doc__ or "").strip()  # type: ignore[attr-defined]
             fn.args_schema = args_model  # type: ignore[attr-defined]
+
+            def _invoke(args: dict[str, Any]) -> Any:  # type: ignore[no-untyped-def]
+                return fn(**args)
+
+            fn.invoke = _invoke  # type: ignore[attr-defined]
             return fn
 
         if func is None:
