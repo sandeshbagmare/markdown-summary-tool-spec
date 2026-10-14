@@ -92,6 +92,42 @@ Single `create_visualization` = single chart by design; dashboard = N parallel c
 * [`AGENTS.md`](./AGENTS.md) — The 2 tools, DeepAgent wiring, architecture, live outputs, and how to verify every claim (copy-paste commands).
 * [`SKILL.md`](./SKILL.md) — What each tool can do, with example questions and which sample proves it.
 
+## Repo Adapter — Adapt to Any Repo
+
+Make the tools fit a new repo (different sampling, extra args, connectors, facts):
+
+```powershell
+# One-command adapt
+python -m repo_adapter.cli --repo /path/to/target-repo --out ./adapted
+
+# Or in Python
+python -c "
+from repo_adapter import RepoAnalyzer, ToolAdapter
+profile = RepoAnalyzer('/path/to/repo').analyze()
+print(profile.raw_notes)
+ToolAdapter.from_profile(profile).write('./adapted')
+"
+# Use the adapted tool
+python -c "
+import sys, json; sys.path.insert(0,'./adapted')
+from adapted_tool import create_markdown_summary
+ds=json.dumps([{'kind':'inline_json','name':'t','data':[{'x':1},{'x':2}]}])
+print(json.loads(create_markdown_summary.invoke({'datasets_json':ds,'question':'Summarize'}))['markdown'][:400])
+"
+```
+
+| Component | Path | Purpose |
+|-----------|------|---------|
+| Analyzer | `src/repo_adapter/analyzer.py` | Scans data files, sampling hints, extra args, connectors |
+| Adapter | `src/repo_adapter/adapter.py` | Generates adapted tool code (sampling + extra kwargs + fact overrides) |
+| Sampling | `src/repo_adapter/sampling.py` | `full/random/stratified/reservoir/window` — deterministic via seed |
+| Connectors | `src/repo_adapter/connectors.py` | Registry for custom DB/API connectors |
+| CLI | `src/repo_adapter/cli.py` | `python -m repo_adapter.cli --repo <path> --out <dir>` |
+| Agents | `agents/repo-adapter-agent.md`, `agents/sampling-agent.md`, `agents/argument-extension-agent.md` | Adaptation workflows |
+| Skills | `skills/adapt-tool/`, `skills/analyze-repo/`, `skills/custom-sampling/`, `skills/extend-arguments/`, `skills/build-tool/` | One-command adapt, analyze, sampling, args, build |
+
+Sampling override at call time: `options_json='{"sampling_strategy":"random","sample_size":2000}'`.
+
 ## License
 
 Draft for engineering review — confidential.

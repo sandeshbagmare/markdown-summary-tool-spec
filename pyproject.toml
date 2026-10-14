@@ -17,6 +17,10 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest>=8", "pytest-asyncio>=0.23", "httpx", "nh3>=0.2"]
 deepagent = ["langchain-core>=0.3", "langgraph>=0.2", "deepagents"]
+adapter = []
+
+[project.scripts]
+repo-adapter = "repo_adapter.cli:main"
 
 [build-system]
 requires = ["hatchling"]

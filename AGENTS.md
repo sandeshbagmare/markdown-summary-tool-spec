@@ -107,11 +107,36 @@ Embed anywhere:
 - Heuristic: first string col = x, first numeric = y; scatter needs 2 numerics; bar/pie do `SUM(y) GROUP BY x`
 - Dashboard = N `create_visualization` calls + stitch Vega specs into one HTML grid
 
-## 7. Test Report
+## 7. Repo Adapter — Adapt to Any Repo
+
+The tools ship with a **repo adapter** that reshapes them to any target repo's data shape, sampling needs, and extra arguments.
+
+| Component | Module | What it does |
+|-----------|--------|--------------|
+| Analyzer | `src/repo_adapter/analyzer.py` | Scans data files (CSV/JSON/Parquet), sampling hints, extra args, connectors |
+| Adapter | `src/repo_adapter/adapter.py` | Generates adapted tool code with sampling + extra kwargs + fact overrides |
+| Sampling | `src/repo_adapter/sampling.py` | `full/random/stratified/reservoir/window` — deterministic via seed |
+| Connectors | `src/repo_adapter/connectors.py` | Registry for custom DB/API connectors |
+| CLI | `src/repo_adapter/cli.py` | `python -m repo_adapter.cli --repo <path> --out <dir>` |
+
+**Agents:** `agents/repo-adapter-agent.md` (main workflow), `agents/sampling-agent.md` (sampling strategies), `agents/argument-extension-agent.md` (extra args).
+
+**Skills:** `skills/adapt-tool/` (one-command adapt), `skills/analyze-repo/`, `skills/custom-sampling/`, `skills/extend-arguments/`, `skills/build-tool/`.
+
+```powershell
+# Analyze + generate adapted tool
+python -m repo_adapter.cli --repo /path/to/target-repo --out ./adapted
+# Verify
+python -m pytest tests/test_repo_adapter.py -q
+```
+
+Sampling override at call time: `options_json='{"sampling_strategy":"random","sample_size":2000}'`.
+
+## 8. Test Report
 
 See [TESTING_REPORT.md](./TESTING_REPORT.md) — 16 pytest + 6 stress checks + DeepAgent live checks, all green. Re-run with `python -m pytest -q`.
 
-## 8. No Hidden Mocks
+## 9. No Hidden Mocks
 
 - `MockLLMClient` is explicit and only used when `API_BASE`/`API_KEY` unset. It interpolates `facts[].formatted` into markdown — never invents numbers.
 - With real env vars, `OpenAICompatibleClient` calls `POST {API_BASE}/chat/completions` with `model=claude-fable-5.1`, `temperature=0.2`, `Authorization: ******`.
